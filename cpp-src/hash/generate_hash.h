@@ -452,7 +452,6 @@ public:
         BOOST_LOG_TRIVIAL(info) << "Minimal perfect hash function created.";
     }
 
-    // Added to Jarno N. Alanko
     sux::function::hash128_t KR_to_hash128_t(kr_hash_t x){
         uint256_t mask = ((uint256_t)1 << 64) - 1;
         uint64_t low_bits = (uint64_t)(x & mask);
