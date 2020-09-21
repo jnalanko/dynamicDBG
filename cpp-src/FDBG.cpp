@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef FDBG_class
 #define FDBG_class
-#define NDEBUG
+//#define NDEBUG
 
 //#include "hash/HashUtil.cpp"
 #include "hash/generate_hash.h"
