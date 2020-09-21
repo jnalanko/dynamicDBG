@@ -17,170 +17,176 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-
-
 #include <iostream>
 #include <cmath>
 
 /**
  * Implements an array of bits by storing integers
  */
-class BitArray {
+class BitArray
+{
 
-   private:
+private:
+    // pointer to all our ints, which hold the bits
+    unsigned *ints;
 
-      // pointer to all our ints, which hold the bits
-      unsigned* ints;
+    // the number of bits in an int
+    unsigned int_size;
 
-      // the number of bits in an int
-      unsigned int_size;
+    // the number of ints that ints points to
+    unsigned num_ints;
 
-      // the number of ints that ints points to
-      unsigned num_ints;
+public:
+    // Create a bit array of n bits
+    BitArray(size_t num_bits)
+    {
 
-   public:
+        allocate(num_bits);
+    }
 
-      // Create a bit array of n bits
-      BitArray(size_t num_bits)  {
+    BitArray()
+    {
+        //default constructor
+    }
 
-	allocate( num_bits );
-      }
+    void allocate(size_t num_bits)
+    {
+        // size of an unsigned is given in bytes
+        this->int_size = 8 * sizeof(unsigned);
 
-  BitArray() {
-    //default constructor
-  }
+        this->num_ints = ceil((num_bits) / ((double)this->int_size));
 
-  void allocate( size_t num_bits ) {
-    // size of an unsigned is given in bytes
-    this->int_size = 8*sizeof(unsigned);
+        // create an array of that number of ints
+        this->ints = new unsigned[num_ints];
 
-    this->num_ints = ceil((num_bits)/((double) this->int_size));
+        // Make sure all ints are 0
+        this->clearInts();
+    }
 
-    // create an array of that number of ints
-    this->ints = new unsigned [num_ints];
+    void clearInts()
+    {
 
-    // Make sure all ints are 0
-    this->clearInts();
-  }
-
-      void clearInts() {
-
-         for (unsigned i = 0; i < this->num_ints; i++) {
+        for (unsigned i = 0; i < this->num_ints; i++)
+        {
             this->ints[i] = 0;
-         }
+        }
+    }
 
-      }
+    // Get which int a certain bit is in
+    unsigned int_num(size_t bit_num)
+    {
 
-      // Get which int a certain bit is in
-      unsigned int_num(size_t bit_num) {
+        return bit_num / this->int_size;
+    }
 
-         return bit_num/this->int_size;
+    // Get what index of its int a certain bit is in
+    unsigned int_index(size_t i)
+    {
 
-      }
+        return i % this->int_size;
+    }
 
-      // Get what index of its int a certain bit is in
-      unsigned int_index(size_t i) {
+    // get the ith bit
+    bool get(size_t i)
+    {
 
-         return i % this->int_size;
+        // What int this bit_num is in
+        unsigned bit_int = this->ints[this->int_num(i)];
+        // What spot in that int this bit_num is
+        unsigned bit_ind = this->int_index(i);
 
-      }
+        // get this bit in the last spot of an int
+        unsigned num = bit_int >> (this->int_size - bit_ind - 1);
+        // Then get higher order bits off
+        num &= 1;
 
-      // get the ith bit
-      bool get(size_t i) {
+        return (bool)num;
+    }
 
-         // What int this bit_num is in
-         unsigned bit_int = this->ints[this->int_num(i)];
-         // What spot in that int this bit_num is
-         unsigned bit_ind = this->int_index(i);
+    // set the ith bit to v
+    void set(size_t i, bool v)
+    {
 
-         // get this bit in the last spot of an int
-         unsigned num = bit_int >> (this->int_size - bit_ind - 1);
-         // Then get higher order bits off
-         num &= 1;
+        // which int in our int array
+        unsigned int_num = this->int_num(i);
 
-         return (bool) num; 
-      }
+        // what index from the right
+        unsigned int_ind_right = this->int_size - this->int_index(i) - 1;
 
-      // set the ith bit to v
-      void set(size_t i, bool v) {
- 
-         // which int in our int array
-         unsigned int_num = this->int_num(i);
+        // Set that spot
+        unsigned op = 1;
+        op = op << int_ind_right;
 
-         // what index from the right
-         unsigned int_ind_right = this->int_size - this->int_index(i) - 1;
-
-         // Set that spot
-         unsigned op = 1;
-         op = op << int_ind_right;
-         
-         if (v) {
+        if (v)
+        {
             // set to 1
-            this->ints[int_num] |=  op;
-         }
-         else {
+            this->ints[int_num] |= op;
+        }
+        else
+        {
             // set to 0
             op = ~op;
             this->ints[int_num] &= op;
-         }
+        }
+    }
 
-      }
+    // Get the amount of bits this is taking up
+    size_t total_bit_size()
+    {
 
-      // Get the amount of bits this is taking up
-      size_t total_bit_size() {
+        return static_cast<size_t>(this->num_ints) * this->int_size;
+    }
 
-	return static_cast<size_t>(this->num_ints)*this->int_size;
+    // Print a string of bits to screen
+    void print()
+    {
 
-      }
+        unsigned index = 0;
 
-      // Print a string of bits to screen
-      void print() {
+        for (int i = 0; i < this->num_ints; i++)
+        {
 
-         unsigned index = 0;
-
-         for (int i = 0; i < this->num_ints; i++) {
-
-             for (int j = 0; j < this->int_size; j++) {
+            for (int j = 0; j < this->int_size; j++)
+            {
                 std::cout << this->get(index);
                 index++;
-             }
+            }
 
-             std::cout << std::endl;
-         }
-
-      }
-
-  /* writes BitArray to a binary file stream */
-  void save( ostream& of ) {
-    of.write( (char *) (&num_ints), sizeof( unsigned ) );
-    of.write( (char *) (&int_size), sizeof( unsigned ) );
-
-    unsigned* ptr = ints;
-    for (unsigned i = 0; i < num_ints; ++i) {
-      of.write( (char *)(ptr++), sizeof(unsigned) );
+            std::cout << std::endl;
+        }
     }
-  }
 
-  void load( istream& of ) {
-    of.read( (char *) (&num_ints), sizeof( unsigned ) );
-    of.read( (char *) (&int_size), sizeof( unsigned ) );
-    //    cerr << "Bitarray int_size " << int_size << endl;
-    //    cerr << "Bitarray num_ints " << num_ints << endl;
-    ints = new unsigned [ num_ints ];
-    unsigned* ptr = ints;
-    for (unsigned i = 0; i < num_ints; ++i) {
-      of.read( ((char*) (ptr++)),
-	       sizeof (unsigned) );
+    /* writes BitArray to a binary file stream */
+    void save(ostream &of)
+    {
+        of.write((char *)(&num_ints), sizeof(unsigned));
+        of.write((char *)(&int_size), sizeof(unsigned));
+
+        unsigned *ptr = ints;
+        for (unsigned i = 0; i < num_ints; ++i)
+        {
+            of.write((char *)(ptr++), sizeof(unsigned));
+        }
     }
-    
-  }
-  
 
-  ~BitArray() {
+    void load(istream &of)
+    {
+        of.read((char *)(&num_ints), sizeof(unsigned));
+        of.read((char *)(&int_size), sizeof(unsigned));
+        //    cerr << "Bitarray int_size " << int_size << endl;
+        //    cerr << "Bitarray num_ints " << num_ints << endl;
+        ints = new unsigned[num_ints];
+        unsigned *ptr = ints;
+        for (unsigned i = 0; i < num_ints; ++i)
+        {
+            of.read(((char *)(ptr++)),
+                    sizeof(unsigned));
+        }
+    }
 
-    delete[] this->ints;
-  }
+    ~BitArray()
+    {
+
+        delete[] this->ints;
+    }
 };
-
-
-
