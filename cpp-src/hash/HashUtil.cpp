@@ -4,6 +4,10 @@
 #include <ctime>
 #include <iostream>
 #include "../formatutil.cpp"
+#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/multiprecision/gmp.hpp>
+#include <boost/random.hpp>
+#include <boost/functional/hash.hpp>
 
 using namespace std;
 typedef uint64_t kmer_t;
@@ -19,6 +23,18 @@ unsigned access_kmer(kmer_t mer, unsigned i);
 void print_kmer(kmer_t mer, unsigned k, ostream &os);
 string get_kmer_str(kmer_t mer, unsigned k);
 /**Utility functions for generating our hash function*/
+
+// Returns x^e modulo mod. Type T must be big enough to hold the value of mod^2.
+template <typename T>
+T modexp(T x, T e, T mod)
+{
+    if (e == 0)
+        return 1;
+    x %= mod;
+    T a = (e % 2 == 1) ? x : 1;
+    T s = modexp(x, e / 2, mod);
+    return (s * s % mod) * a % mod;
+}
 
 /*                                                                                                      
  * Finds inverse of a modulo b
@@ -113,10 +129,9 @@ bool isPrime(T n)
 template <typename T>
 T randomNumber(const T start, const T end)
 {
-    double myRand = std::rand() / (1.0 + RAND_MAX);
-    T range = end - start + 1;
-    T random_num = (myRand * range) + start;
-    return random_num;
+    static boost::random::mt19937 gen;
+    static boost::random::uniform_int_distribution<T> dist(start, end);
+    return dist(gen);
 }
 
 /**

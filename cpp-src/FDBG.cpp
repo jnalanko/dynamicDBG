@@ -742,7 +742,7 @@ public:
         res += this->fo.getBitSize();
 
         // mphf
-        res += f.bphf->totalBitSize();
+        //res += f.bphf->totalBitSize();
 
         return res;
     }
@@ -1678,7 +1678,7 @@ public:
     void reverseEdgesToRoot(kmer_t node)
     {
 
-        u_int64_t node_kr = this->f.generate_KRHash_val_mod(node, this->k);
+        uint128_t node_kr = this->f.generate_KRHash_val_mod(node, this->k);
         u_int64_t node_hash = this->f.perfect_from_KR_mod(node, node_kr);
 
         // we are already at the root, nothing to store
@@ -1691,7 +1691,8 @@ public:
 
         // Get all parent data
         kmer_t parent;
-        u_int64_t parent_kr, parent_hash;
+        kr_hash_t parent_kr;
+        u_int64_t parent_hash;
         getParentInfo(node, node_kr, node_hash, parent, parent_kr, parent_hash);
         // Whether forest edges are via IN or OUT
         bool in = this->fo.parent_in_IN(node_hash);
@@ -1699,7 +1700,8 @@ public:
 
         // Need to save this to move forward after we've changed link to parent
         kmer_t grandparent;
-        u_int64_t grandparent_kr, grandparent_hash;
+        kr_hash_t grandparent_kr;
+        u_int64_t grandparent_hash;
 
         // Keep reversing edges until we get to the last one
         assert(this->f.hash_in_range(parent_hash));
@@ -1778,8 +1780,8 @@ public:
     /**
    * Get parent info from child info
    */
-    void getParentInfo(const kmer_t &node, const u_int64_t &node_kr, const u_int64_t &node_hash,
-                       kmer_t &parent, u_int64_t &parent_kr, u_int64_t &parent_hash)
+    void getParentInfo(const kmer_t &node, const kr_hash_t &node_kr, const u_int64_t &node_hash,
+                       kmer_t &parent, kr_hash_t &parent_kr, u_int64_t &parent_hash)
     {
 
         //BOOST_LOG_TRIVIAL(debug) << "Getting info for the parent of "
@@ -1850,14 +1852,14 @@ public:
         }
     }
 
-    uint64_t getPrime()
+    uint256_t getPrime()
     {
         return f.Prime;
     }
 
     uint64_t getHash(kmer_t m)
     {
-        u_int64_t KR_val = f.generate_KRHash_val_mod(m, k);
+        kr_hash_t KR_val = f.generate_KRHash_val_mod(m, k);
         u_int64_t hash = f.perfect_from_KR_mod(m, KR_val);
 
         return hash;
@@ -1869,7 +1871,7 @@ public:
 
         // The hash and KR_val of our kmer
         // Need to keep track of KRval, so it can be updated
-        u_int64_t KR_val = f.generate_KRHash_val_mod(m, k);
+        kr_hash_t KR_val = f.generate_KRHash_val_mod(m, k);
         u_int64_t hash = f.perfect_from_KR_mod(m, KR_val);
 
         if (!this->f.hash_in_range(hash))
@@ -1971,8 +1973,8 @@ public:
     kmer_t getParent(const kmer_t &m)
     {
 
-        kmer_t parent_kr = 0;
-        u_int64_t m_kr = f.generate_KRHash_val_mod(m, this->k);
+        kr_hash_t parent_kr = 0;
+        kr_hash_t m_kr = f.generate_KRHash_val_mod(m, this->k);
         kmer_t parent_kmer;
 
         getParent(m, m_kr, parent_kmer, parent_kr);
@@ -1984,8 +1986,8 @@ public:
 
     // Set the parent's kmer, and karp-rabin value
     // given the child's kmer and krval
-    void getParent(const kmer_t &m, const u_int64_t &kr_val,
-                   kmer_t &parent_kmer, u_int64_t &parent_kr)
+    void getParent(const kmer_t &m, const kr_hash_t &kr_val,
+                   kmer_t &parent_kmer, kr_hash_t &parent_kr)
     {
 
         //BOOST_LOG_TRIVIAL(debug) << "Finding parent data for kmer "
@@ -2050,10 +2052,10 @@ public:
         u_int64_t ancestor_hash = this->f(ancestor);
 
         // node's hash and other stuff to travel up efficiently
-        u_int64_t kr = f.generate_KRHash_val_mod(node, this->k);
+        kr_hash_t kr = f.generate_KRHash_val_mod(node, this->k);
         u_int64_t hash = f.perfect_from_KR_mod(node, kr);
         kmer_t parent;
-        u_int64_t parent_kr;
+        kr_hash_t parent_kr;
 
         //BOOST_LOG_TRIVIAL(debug) << "Finding whether " << get_kmer_str(ancestor, this->k)
         //   << " is an ancestor of " << get_kmer_str(node, this->k);
@@ -2181,10 +2183,10 @@ public:
 
         unsigned node_height = 0;
 
-        u_int64_t kr = f.generate_KRHash_val_mod(node, this->k);
+        kr_hash_t kr = f.generate_KRHash_val_mod(node, this->k);
         u_int64_t hash = f.perfect_from_KR_mod(node, kr);
         kmer_t parent;
-        u_int64_t parent_kr;
+        kr_hash_t parent_kr;
 
         assert(this->f.hash_in_range(hash));
         if (this->fo.isStored(hash))
@@ -2224,10 +2226,10 @@ public:
     void travelUp(kmer_t node, const unsigned &hops, kmer_t &ancestor, u_int64_t &ancestor_hash)
     {
 
-        u_int64_t kr = f.generate_KRHash_val_mod(node, this->k);
+        kr_hash_t kr = f.generate_KRHash_val_mod(node, this->k);
         u_int64_t hash = f.perfect_from_KR_mod(node, kr);
         kmer_t parent;
-        u_int64_t parent_kr;
+        kr_hash_t parent_kr;
 
         assert(this->f.hash_in_range(hash));
         if (this->fo.isStored(hash))
@@ -2274,7 +2276,7 @@ public:
         children_hash.clear();
 
         // get KR value to make getting neighbor hash values easier
-        u_int64_t node_kr = f.generate_KRHash_val_mod(node, this->k);
+        kr_hash_t node_kr = f.generate_KRHash_val_mod(node, this->k);
 
         vector<kmer_t> neighbors;
         vector<bool> inorout;
@@ -2514,7 +2516,7 @@ public:
         while (visitedMers.size() != this->n)
         {
             ++nCC;
-            uint64_t start = *kmers.begin();
+            kmer_t start = *kmers.begin();
 
             queue<kmer_t> Q;
             Q.push(start);
