@@ -540,20 +540,20 @@ public:
     }
 
     // Set row, col value
-    void set(unsigned row, unsigned col, bool val)
+    void set(u_int64_t row, u_int64_t col, bool val)
     {
 
         if (row < this->n_orig)
         {
             // original node
 
-            unsigned index = 4 * row + col;
+            u_int64_t index = 4 * row + col;
             this->bitarray.set(index, val);
         }
         else
         {
             // added node
-            unsigned index = row - this->n_orig;
+            u_int64_t index = row - this->n_orig;
             assert(this->added_rows.size() > index);
             assert(this->added_rows[index].size() > col);
 
@@ -562,18 +562,18 @@ public:
     }
 
     // Get row, col value
-    bool get(unsigned row, unsigned col)
+    bool get(u_int64_t row, u_int64_t col)
     {
 
         if (row < this->n_orig)
         {
             // original node
-            unsigned index = 4 * row + col;
+            u_int64_t index = 4 * row + col;
             return this->bitarray.get(index);
         }
         else
         {
-            unsigned index = row - this->n_orig;
+            u_int64_t index = row - this->n_orig;
             assert(this->added_rows.size() > index);
             assert(this->added_rows[index].size() > col);
 
