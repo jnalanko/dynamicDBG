@@ -28,13 +28,13 @@ class BitArray
 
 private:
     // pointer to all our ints, which hold the bits
-    unsigned *ints;
+    uint64_t *ints;
 
     // the number of bits in an int
-    unsigned int_size;
+    uint64_t int_size;
 
     // the number of ints that ints points to
-    unsigned num_ints;
+    uint64_t num_ints;
 
 public:
     // Create a bit array of n bits
@@ -51,13 +51,13 @@ public:
 
     void allocate(size_t num_bits)
     {
-        // size of an unsigned is given in bytes
-        this->int_size = 8 * sizeof(unsigned);
+        // size of an uint64_t is given in bytes
+        this->int_size = 8 * sizeof(uint64_t);
 
         this->num_ints = ceil((num_bits) / ((double)this->int_size));
 
         // create an array of that number of ints
-        this->ints = new unsigned[num_ints];
+        this->ints = new uint64_t[num_ints];
 
         // Make sure all ints are 0
         this->clearInts();
@@ -66,21 +66,21 @@ public:
     void clearInts()
     {
 
-        for (unsigned i = 0; i < this->num_ints; i++)
+        for (uint64_t i = 0; i < this->num_ints; i++)
         {
             this->ints[i] = 0;
         }
     }
 
     // Get which int a certain bit is in
-    unsigned int_num(size_t bit_num)
+    uint64_t int_num(size_t bit_num)
     {
 
         return bit_num / this->int_size;
     }
 
     // Get what index of its int a certain bit is in
-    unsigned int_index(size_t i)
+    uint64_t int_index(size_t i)
     {
 
         return i % this->int_size;
@@ -91,12 +91,12 @@ public:
     {
 
         // What int this bit_num is in
-        unsigned bit_int = this->ints[this->int_num(i)];
+        uint64_t bit_int = this->ints[this->int_num(i)];
         // What spot in that int this bit_num is
-        unsigned bit_ind = this->int_index(i);
+        uint64_t bit_ind = this->int_index(i);
 
         // get this bit in the last spot of an int
-        unsigned num = bit_int >> (this->int_size - bit_ind - 1);
+        uint64_t num = bit_int >> (this->int_size - bit_ind - 1);
         // Then get higher order bits off
         num &= 1;
 
@@ -108,13 +108,13 @@ public:
     {
 
         // which int in our int array
-        unsigned int_num = this->int_num(i);
+        uint64_t int_num = this->int_num(i);
 
         // what index from the right
-        unsigned int_ind_right = this->int_size - this->int_index(i) - 1;
+        uint64_t int_ind_right = this->int_size - this->int_index(i) - 1;
 
         // Set that spot
-        unsigned op = 1;
+        uint64_t op = 1;
         op = op << int_ind_right;
 
         if (v)
@@ -141,7 +141,7 @@ public:
     void print()
     {
 
-        unsigned index = 0;
+        uint64_t index = 0;
 
         for (int i = 0; i < this->num_ints; i++)
         {
@@ -159,28 +159,28 @@ public:
     /* writes BitArray to a binary file stream */
     void save(ostream &of)
     {
-        of.write((char *)(&num_ints), sizeof(unsigned));
-        of.write((char *)(&int_size), sizeof(unsigned));
+        of.write((char *)(&num_ints), sizeof(uint64_t));
+        of.write((char *)(&int_size), sizeof(uint64_t));
 
-        unsigned *ptr = ints;
-        for (unsigned i = 0; i < num_ints; ++i)
+        uint64_t *ptr = ints;
+        for (uint64_t i = 0; i < num_ints; ++i)
         {
-            of.write((char *)(ptr++), sizeof(unsigned));
+            of.write((char *)(ptr++), sizeof(uint64_t));
         }
     }
 
     void load(istream &of)
     {
-        of.read((char *)(&num_ints), sizeof(unsigned));
-        of.read((char *)(&int_size), sizeof(unsigned));
+        of.read((char *)(&num_ints), sizeof(uint64_t));
+        of.read((char *)(&int_size), sizeof(uint64_t));
         //    cerr << "Bitarray int_size " << int_size << endl;
         //    cerr << "Bitarray num_ints " << num_ints << endl;
-        ints = new unsigned[num_ints];
-        unsigned *ptr = ints;
-        for (unsigned i = 0; i < num_ints; ++i)
+        ints = new uint64_t[num_ints];
+        uint64_t *ptr = ints;
+        for (uint64_t i = 0; i < num_ints; ++i)
         {
             of.read(((char *)(ptr++)),
-                    sizeof(unsigned));
+                    sizeof(uint64_t));
         }
     }
 
