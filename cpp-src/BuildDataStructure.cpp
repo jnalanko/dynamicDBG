@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 
     // fasta filename
     string filename = argv[1];
-    int k = stoi(argv[2]);
+    int64_t k = stoi(argv[2]);
     FDBG Graph;
 
     //Have we constructed this dataset before on these parameters?

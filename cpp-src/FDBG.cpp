@@ -714,7 +714,7 @@ public:
         vector<bool> in_or_out;
         get_neighbors(kmer, neighbors, in_or_out);
 
-        for (int i = 0; i < neighbors.size(); i++)
+        for (int64_t i = 0; i < neighbors.size(); i++)
         {
 
             if (in_or_out[i])
@@ -2294,7 +2294,7 @@ public:
         kmer_t parent; // holds the parent of a neighbor for comparison
 
         // get the hash values for each neighbor, check if node is their parent in forest
-        for (int i = 0; i < neighbors.size(); i++)
+        for (int64_t i = 0; i < neighbors.size(); i++)
         {
 
             if (inorout[i] == 1)
@@ -2401,7 +2401,7 @@ public:
             height++;
 
             // Get children of each child
-            for (int i = 0; i < children.size(); i++)
+            for (int64_t i = 0; i < children.size(); i++)
             {
                 // add child with height
                 heights[children[i]] = height;
@@ -2412,7 +2412,7 @@ public:
                 getChildren(children[i], children_node, children_node_hash);
 
                 // add each one to children_children
-                for (int j = 0; j < children_node.size(); j++)
+                for (int64_t j = 0; j < children_node.size(); j++)
                 {
                     children_children.push_back(children_node[j]);
                     children_children_hash.push_back(children_node_hash[j]);
@@ -2475,7 +2475,7 @@ public:
             height++;
 
             // Get children of each child
-            for (int i = 0; i < children.size(); i++)
+            for (int64_t i = 0; i < children.size(); i++)
             {
                 // add child with height
                 heights[children[i]] = height;
@@ -2486,7 +2486,7 @@ public:
                 getChildren(children[i], children_node, children_node_hash);
 
                 // add each one to children_children
-                for (int j = 0; j < children_node.size(); j++)
+                for (int64_t j = 0; j < children_node.size(); j++)
                 {
 
                     children_children.push_back(children_node[j]);
@@ -2565,7 +2565,7 @@ public:
    * Requires non-used bits of kmers to be zero
    * WARNING: kmers will be modified
    */
-    void construct_forest(unordered_set<kmer_t> &kmers, int alpha)
+    void construct_forest(unordered_set<kmer_t> &kmers, int64_t alpha)
     {
         logg << INFO << "Beginning the forest construction, with alpha = " << alpha << endL;
         this->alpha = alpha;
@@ -2653,7 +2653,7 @@ public:
                         }
 
                         h[f_m] = h[f_c] + 1;
-                        int height_m = h[f_m];
+                        int64_t height_m = h[f_m];
                         if (height_m <= alpha)
                         {
                             p1[f_m] = p1[f_c];
@@ -2885,7 +2885,7 @@ kmer_t getMaxVal(uint64_t k)
 
     kmer_t max = 0;
 
-    for (int i = 0; i < k; ++i)
+    for (int64_t i = 0; i < k; ++i)
     {
         max <<= 2;
         max |= 3;

@@ -53,7 +53,7 @@ double removeRandomEdges(const uint64_t &count, FDBG &Graph, unordered_set<kmer_
     std::uniform_int_distribution<u_int64_t> unif_dist(0, edgemers.size() - 1);
     while (removed.size() < count)
     {
-        int randnum = unif_dist(rand);
+        int64_t randnum = unif_dist(rand);
 
         // get the prefix and suffix
         Graph.split_edge(vEdges[randnum], prefix, suffix);
@@ -86,9 +86,9 @@ double randomMembership(const uint64_t &count, FDBG &Graph, const unordered_set<
 
     vector<kmer_t> vKmers(kmers.begin(), kmers.end());
 
-    for (int i = 0; i < count; i++)
+    for (int64_t i = 0; i < count; i++)
     {
-        int randnum = unif_dist(rand);
+        int64_t randnum = unif_dist(rand);
         // auto it = kmers.begin();
 
         // for (int i = 0; i < randnum; i++) {
@@ -124,10 +124,10 @@ pair<double, double> randomDynamicNodes(const uint64_t &count, FDBG &Graph, cons
 
     vector<kmer_t> vKmers(kmers.begin(), kmers.end());
 
-    for (int i = 0; i < count; i++)
+    for (int64_t i = 0; i < count; i++)
     {
 
-        int randnum = unif_dist(rand);
+        int64_t randnum = unif_dist(rand);
         kmer_t kmer = vKmers[randnum];
 
         //BOOST_LOG_TRIVIAL(info) << "Removing and then adding back in " << kmer;
@@ -164,7 +164,7 @@ pair<double, double> randomDynamicNodes(const uint64_t &count, FDBG &Graph, cons
         assert(Graph.detect_membership(kmer));
         //assert (size == 1);
         //assert (root == kmer);
-        for (int i = 0; i < neighbors.size(); i++)
+        for (int64_t i = 0; i < neighbors.size(); i++)
         {
             if (in_or_out[i])
             {

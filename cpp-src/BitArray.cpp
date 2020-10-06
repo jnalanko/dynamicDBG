@@ -143,10 +143,10 @@ public:
 
         uint64_t index = 0;
 
-        for (int i = 0; i < this->num_ints; i++)
+        for (int64_t i = 0; i < this->num_ints; i++)
         {
 
-            for (int j = 0; j < this->int_size; j++)
+            for (int64_t j = 0; j < this->int_size; j++)
             {
                 std::cout << this->get(index);
                 index++;
