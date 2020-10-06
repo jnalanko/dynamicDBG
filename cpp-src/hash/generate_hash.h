@@ -131,6 +131,15 @@ public:
         }
 
         rinv = kr;
+        #ifdef DEBUG_DATA
+        // Debug: print all k-mers and perfect hash values
+        cerr << "Writing k-mers to debug-kmers.txt" << endl;
+        ofstream debug("debug-kmers.txt");
+        for(auto kmer : kmers){
+            debug << kmer << " " << get_hash_value(kmer) << "\n";
+        }
+        debug.close();
+        #endif
     }
 
     void precomputePowers_mod()

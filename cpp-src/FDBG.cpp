@@ -779,6 +779,27 @@ public:
 
         add_edges(edgemers);
 
+        #ifdef DEBUG_DATA
+        cerr << "Writing OUT-matrix to debug-out.txt" << endl;
+        ofstream OUTf("debug-out.txt");
+        for(int64_t i = 0; i < n; i++){
+            for(int64_t j = 0; j < 4; j++){
+                OUTf << (int64_t)(this->OUT.get(i,j)) << " ";
+        }
+            OUTf << "\n";
+        }
+        OUTf.close();
+        cerr << "Writing IN-matrix to debug-in.txt" << endl;
+        ofstream INf("debug-in.txt");
+        for(int64_t i = 0; i < n; i++){
+            for(int64_t j = 0; j < 4; j++){
+                INf << (int64_t)(this->IN.get(i,j)) << " ";
+        }
+            INf << "\n";
+        }
+        INf.close();
+        #endif
+
         //For debugging, print IN and OUT given kmers
         //printINandOUT(kmers);
 
