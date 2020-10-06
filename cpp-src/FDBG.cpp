@@ -433,7 +433,7 @@ public:
     }
 
     // Set whether the ith node has IN
-    bool set_parent_in_IN(const u_int64_t &i, bool in)
+    void set_parent_in_IN(const u_int64_t &i, bool in)
     {
 
         this->setData(i, 1, in);
