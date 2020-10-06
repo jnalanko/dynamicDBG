@@ -40,23 +40,23 @@ using namespace std;
 
 typedef uint64_t kmer_t;
 
-unsigned access_kmer(kmer_t mer, unsigned k, unsigned i)
+uint64_t access_kmer(kmer_t mer, uint64_t k, uint64_t i)
 {
     mer = mer >> 2 * (k - i - 1);
     kmer_t mask = static_cast<kmer_t>(3);
     mer = mask & mer;
-    return static_cast<unsigned>(mer);
+    return static_cast<uint64_t>(mer);
 }
 
-string get_kmer_str(kmer_t mer, unsigned k)
+string get_kmer_str(kmer_t mer, uint64_t k)
 {
 
     string kmer_str = "";
 
-    for (unsigned i = 0; i < k; ++i)
+    for (uint64_t i = 0; i < k; ++i)
     {
 
-        unsigned kk = access_kmer(mer, k, i);
+        uint64_t kk = access_kmer(mer, k, i);
 
         switch (kk)
         {
@@ -78,7 +78,7 @@ string get_kmer_str(kmer_t mer, unsigned k)
     return kmer_str;
 }
 
-void print_kmer(kmer_t mer, unsigned k, ostream &os)
+void print_kmer(kmer_t mer, uint64_t k, ostream &os)
 {
 
     os << get_kmer_str(mer, k);
@@ -88,7 +88,7 @@ void print_kmer(kmer_t mer, unsigned k, ostream &os)
  * Sets the i'th position of a mer of length k as indicated by character c
  * c \in {A,C,G,T}
  */
-void set_kmer(kmer_t &mer, unsigned k, unsigned i, char c)
+void set_kmer(kmer_t &mer, uint64_t k, uint64_t i, char c)
 {
     //clear i-th position
     kmer_t op = 3;              //0...011
@@ -118,12 +118,12 @@ void set_kmer(kmer_t &mer, unsigned k, unsigned i, char c)
     mer = mer | val;
 }
 
-kmer_t mer_string_to_binary(string &r, unsigned &i, unsigned &K)
+kmer_t mer_string_to_binary(string &r, uint64_t &i, uint64_t &K)
 {
     kmer_t mer = 0;
 
     kmer_t val;
-    for (unsigned j = 0; j < K; ++j)
+    for (uint64_t j = 0; j < K; ++j)
     {
         //set j'th position
         char c = r[i + j];
@@ -155,7 +155,7 @@ kmer_t mer_string_to_binary(string &r, unsigned &i, unsigned &K)
     return mer;
 }
 
-void getKmers(vector<string> &reads, unsigned K, unordered_set<kmer_t> &kmers)
+void getKmers(vector<string> &reads, uint64_t K, unordered_set<kmer_t> &kmers)
 {
     BOOST_LOG_TRIVIAL(info) << "Erasing all 'N' characters...";
     kmers.clear();
@@ -164,7 +164,7 @@ void getKmers(vector<string> &reads, unsigned K, unordered_set<kmer_t> &kmers)
         r.erase(std::remove(r.begin(), r.end(), 'N'), r.end());
         if (r.size() < K)
             continue;
-        for (unsigned i = 0; i < r.size() - K + 1; i++)
+        for (uint64_t i = 0; i < r.size() - K + 1; i++)
         {
             kmer_t kmer_bin = mer_string_to_binary(r, i, K);
             kmers.insert(kmer_bin);
@@ -228,7 +228,7 @@ void write_to_bin(string outfile, unordered_set<kmer_t> &kmers)
 
     kmer_t *kdata = new kmer_t[kmers.size()];
     auto it = kmers.begin();
-    unsigned i = 0;
+    uint64_t i = 0;
     while (it != kmers.end())
     {
         kdata[i] = *it;
@@ -305,7 +305,7 @@ void writeFasta(string filename, vector<string> &reads)
     ofile.close();
 }
 
-void get_kmers_fasta_or_bin(string fasta_file, unsigned k, unordered_set<kmer_t> &out)
+void get_kmers_fasta_or_bin(string fasta_file, uint64_t k, unordered_set<kmer_t> &out)
 {
     // fasta filename
     string filename = fasta_file;
@@ -339,7 +339,7 @@ void get_kmers_fasta_or_bin(string fasta_file, unsigned k, unordered_set<kmer_t>
  * files for future use.
  */
 
-void handle_mers(string fasta_file, unsigned k,
+void handle_mers(string fasta_file, uint64_t k,
                  unordered_set<kmer_t> &kmers,   //k mers from fasta
                  unordered_set<kmer_t> &edgemers //k + 1 mers from fasta
 )

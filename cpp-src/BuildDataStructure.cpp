@@ -104,13 +104,13 @@ int main(int argc, char *argv[])
     vector<size_t> treesBelowSize;
     vector<size_t> nCCs;
 
-    unsigned num_trees;
+    uint64_t num_trees;
     double avg_height;  // average height of trees
-    unsigned num_above; // number above the supposed max
-    unsigned num_below; // number below the supposed min
-    map<unsigned, unsigned> height_dist;
-    unsigned minHeight;
-    unsigned maxHeight;
+    uint64_t num_above; // number above the supposed max
+    uint64_t num_below; // number below the supposed min
+    map<uint64_t, uint64_t> height_dist;
+    uint64_t minHeight;
+    uint64_t maxHeight;
     Graph.getTreeData(num_trees, avg_height, num_above, num_below); //, height_dist, minHeight, maxHeight);
 
     BOOST_LOG_TRIVIAL(info) << "There are " << num_trees << " trees";
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 
     // How many random edges will be randomly removed
 
-    unsigned remove_edge_count = min(0.1 * edgemers.size(), 1000000.0);
+    uint64_t remove_edge_count = min(0.1 * edgemers.size(), 1000000.0);
     unordered_set<kmer_t> removed_edges;
 
     BOOST_LOG_TRIVIAL(info) << "Removing " << remove_edge_count << " random edges ...";
@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
     kmer_t kk;
     t_elapsed = 0.0;
     clock_t t_start;
-    for (unsigned i = 0; i < nQuery; ++i)
+    for (uint64_t i = 0; i < nQuery; ++i)
     {
         //generate a random k-mer
         kk = sample_dis(gen);
@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
     // nQuery = 1000;
     // t_elapsed = 0.0;
     // t_start = clock();
-    // for (unsigned i = 0; i < nQuery; ++i) {
+    // for (uint64_t i = 0; i < nQuery; ++i) {
     //   //generate a random k-mer
     //   kk = sample_dis( gen ) ;
     //   Graph.getHash(kk);
