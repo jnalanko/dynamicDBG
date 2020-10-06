@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Returns elapsed time in seconds (of only the edge removal update)
  */
-double removeRandomEdges(const unsigned &count, FDBG &Graph, unordered_set<kmer_t> edgemers,
+double removeRandomEdges(const uint64_t &count, FDBG &Graph, unordered_set<kmer_t> edgemers,
                          unordered_set<kmer_t> &removed)
 {
 
@@ -74,7 +74,7 @@ double removeRandomEdges(const unsigned &count, FDBG &Graph, unordered_set<kmer_
  *
  * Returns elapsed time in seconds
  */
-double randomMembership(const unsigned &count, FDBG &Graph, const unordered_set<kmer_t> &kmers)
+double randomMembership(const uint64_t &count, FDBG &Graph, const unordered_set<kmer_t> &kmers)
 {
 
     double time_elapsed = 0;
@@ -111,7 +111,7 @@ double randomMembership(const unsigned &count, FDBG &Graph, const unordered_set<
  *
  * Returns elapsed time in seconds for removals and for additions
  */
-pair<double, double> randomDynamicNodes(const unsigned &count, FDBG &Graph, const unordered_set<kmer_t> &kmers)
+pair<double, double> randomDynamicNodes(const uint64_t &count, FDBG &Graph, const unordered_set<kmer_t> &kmers)
 {
 
     double time_elapsed_remove = 0;
@@ -140,7 +140,7 @@ pair<double, double> randomDynamicNodes(const unsigned &count, FDBG &Graph, cons
         // Remove the node
         //size_t depth;
         //kmer_t root;
-        //unsigned size_before = Graph.getTreeSize(kmer, depth, root);
+        //uint64_t size_before = Graph.getTreeSize(kmer, depth, root);
         clock_t t_start = clock();
         Graph.removeNode(kmer);
         //Graph.isolateNode(kmer);
@@ -160,7 +160,7 @@ pair<double, double> randomDynamicNodes(const unsigned &count, FDBG &Graph, cons
         // Add the node along with its edges back in
         t_start = clock();
         Graph.addNode(kmer);
-        //unsigned size = Graph.getTreeSize(kmer, depth, root);
+        //uint64_t size = Graph.getTreeSize(kmer, depth, root);
         assert(Graph.detect_membership(kmer));
         //assert (size == 1);
         //assert (root == kmer);
