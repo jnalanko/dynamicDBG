@@ -133,8 +133,9 @@ void set_kmer(kmer_t &mer, uint64_t k, uint64_t i, char c)
 
 // Drops the first character and appends c
 void kmer_roll(kmer_t& mer, uint64_t k, char c){
-    mer <<= 2; // Drop first
-    set_kmer(mer, k, k-1, c);
+    mer &= ~((kmer_t)(0x03) << (2 * (k-1))); // Clear first char
+    mer <<= 2; // Shift left
+    set_kmer(mer, k, k-1, c); // Append
 }
 
 
