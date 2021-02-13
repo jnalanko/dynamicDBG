@@ -379,9 +379,9 @@ public:
         uint256_t rk = powersOfRModP[k_kmer - 1];
         uint256_t four = 4;
 
-        uint256_t sub_val = four * Prime - ffirst * r;
-        kr = (kr + sub_val) % Prime;
-        kr = (kr * rinv)  % Prime;
+        uint256_t sub_val = four * Prime - ffirst * r; // < 4p
+        kr = (kr + sub_val) % Prime; // kr + sub_val < 5p
+        kr = (kr * rinv)  % Prime; // kr * rinv < p^2
         kr = (kr + llast * rk)  % Prime;
 
         return static_cast<kr_hash_t>(kr);
