@@ -48,6 +48,19 @@ uint64_t access_kmer(kmer_t mer, uint64_t k, uint64_t i)
     return static_cast<uint64_t>(mer);
 }
 
+char access_kmer_char(kmer_t mer, uint64_t k, uint64_t i)
+{
+    uint64_t val = access_kmer(mer,k,i);
+    switch (val){
+        case 0: return 'A';
+        case 1: return 'C';
+        case 2: return 'G';
+        case 3: return 'T';
+        default: cerr << "This should never happen" << endl; exit(1);
+    }
+}
+
+
 string get_kmer_str(kmer_t mer, uint64_t k)
 {
 

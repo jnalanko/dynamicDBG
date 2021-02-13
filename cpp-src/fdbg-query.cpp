@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
 
                 // Compute edgemer suffix KR hash by rolling the hash
                 kr_hash_t KR_v = KR_u;
-                Graph.f.update_KRHash_val_OUT_mod(KR_v, access_kmer(nodemer_u,nodemer_k,0), access_kmer(nodemer_v,nodemer_k,nodemer_k-1));
+                Graph.f.update_KRHash_val_OUT_mod(KR_v, access_kmer_char(nodemer_u,nodemer_k,0), access_kmer_char(nodemer_v,nodemer_k,nodemer_k-1));
 
                 bool present = Graph.IsEdgeInGraph_given_KR(nodemer_u, KR_u, nodemer_v, KR_v);
                 hits[i-nodemer_k] = present;
