@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
                 Graph.f.update_KRHash_val_OUT_mod(KR_v, access_kmer(nodemer_u,nodemer_k,0), access_kmer(nodemer_v,nodemer_k,nodemer_k-1));
 
                 bool present = Graph.IsEdgeInGraph_given_KR(nodemer_u, KR_u, nodemer_v, KR_v);
-                hits[i] = present;
+                hits[i-nodemer_k] = present;
             }
             // Write out
             for(long long i = 0; i < (long long)hits.size(); i++)
