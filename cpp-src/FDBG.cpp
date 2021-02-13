@@ -1030,6 +1030,23 @@ public:
         return true;
     }
 
+    bool IsEdgeInGraph_given_KR(const kmer_t& u, const kr_hash_t& KR_u, const kmer_t& v, const kr_hash_t& KR_v) {
+
+        if (!this->detect_membership_given_KR(u, KR_u) || !this->detect_membership_given_KR(v, KR_v))
+            return false;
+        u_int64_t hashU = f.perfect_from_KR_mod(u, KR_u);
+        u_int64_t hashV = f.perfect_from_KR_mod(v, KR_v);
+
+        assert(this->f.hash_in_range(hashU));
+        assert(this->f.hash_in_range(hashV));
+        unsigned outIndex = access_kmer(v, k, k - 1);
+        unsigned inIndex = access_kmer(u, k, 0);
+        if (!OUT.get(hashU, outIndex)) {
+            return false;
+        }
+        return true;
+    }
+
     // Check if it is possible to have an edge from u to v
     // based upon the kmers
     bool edgePossible(const kmer_t &u, const kmer_t &v)
@@ -1906,13 +1923,7 @@ public:
         return hash;
     }
 
-    // Given a kmer, decide if it is one in our graph
-    bool detect_membership(kmer_t m)
-    {
-
-        // The hash and KR_val of our kmer
-        // Need to keep track of KRval, so it can be updated
-        kr_hash_t KR_val = f.generate_KRHash_val_mod(m, k);
+    bool detect_membership_given_KR(kmer_t m, kr_hash_t KR_val){
         u_int64_t hash = f.perfect_from_KR_mod(m, KR_val);
 
         if (!this->f.hash_in_range(hash))
@@ -2008,6 +2019,14 @@ public:
             return true;
         else
             return false;
+    }
+
+    // Given a kmer, decide if it is one in our graph
+    bool detect_membership(kmer_t m)
+    {
+        kr_hash_t KR_val = f.generate_KRHash_val_mod(m, k);
+        return detect_membership_given_KR(m, KR_val);
+
     }
 
     // Set the parent's kmer given the child's kmer
