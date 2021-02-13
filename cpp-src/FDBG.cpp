@@ -1010,6 +1010,26 @@ public:
         fo.setNode(uHash, Direction, c);
     }
 
+    /*
+     * Add an edge and then do the forest update procedure
+     * Returns whether an edge was added or not
+     */
+    bool IsEdgeInGraph(const kmer_t& u, const kmer_t& v) {
+        if (!this->detect_membership(u) || !this->detect_membership(v))
+            return false;
+        u_int64_t hashU = f(u);
+        u_int64_t hashV = f(v);
+
+        assert(this->f.hash_in_range(hashU));
+        assert(this->f.hash_in_range(hashV));
+        unsigned outIndex = access_kmer(v, k, k - 1);
+        unsigned inIndex = access_kmer(u, k, 0);
+        if (!OUT.get(hashU, outIndex)) {
+            return false;
+        }
+        return true;
+    }
+
     // Check if it is possible to have an edge from u to v
     // based upon the kmers
     bool edgePossible(const kmer_t &u, const kmer_t &v)

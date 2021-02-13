@@ -1,12 +1,17 @@
-fdbg_recsplit: BuildDataStructure.cpp formatutil.cpp TestUtil.cpp FDBG.cpp
-	g++ -O3  -std=c++17 BuildDataStructure.cpp -o fdbg_recsplit -l boost_log -l boost_system -l pthread -I ../sux -DNDEBUG
-format: test_format.cpp
-	g++ -O3  -std=c++11 test_format.cpp -o tf -l boost_log -l pthread -l bf
+.PHONY: fdbg-recsplit-build fdbg-recsplit-add fdbg-recsplit-del fdbg-recsplit-query
+all: fdbg-recsplit-build fdbg-recsplit-add fdbg-recsplit-del fdbg-recsplit-query
+
 test: BuildDataStructure.cpp formatutil.cpp TestUtil.cpp FDBG.cpp
 	g++ -O0 -g  -std=c++17 BuildDataStructure.cpp -o bds_test -l boost_log -l boost_system -l pthread -I ../sux
-readsplit: ReadSplit.cpp
-	g++ -O3 -std=c++11 ReadSplit.cpp -o readsplit -l boost_log -l pthread
-countreads: CountReads.cpp
-	g++ -O3 -std=c++11 CountReads.cpp -o countreads -l boost_log -l pthread
-clean:
-	rm bds *.bin
+
+fdbg-recsplit-build:
+	g++ -O3 -std=c++17 fdbg-build.cpp -o fdbg-recsplit-build -l boost_log -l boost_system -l pthread -I ../sux -DNDEBUG 
+
+fdbg-recsplit-add:
+	g++ -O3 -std=c++17 fdbg-add.cpp -o fdbg-recsplit-add -l boost_log -l boost_system -l pthread -I ../sux -DNDEBUG
+
+fdbg-recsplit-del:
+	g++ -O3 -std=c++17 fdbg-del.cpp -o fdbg-recsplit-del -l boost_log -l boost_system -l pthread -I ../sux -DNDEBUG
+
+fdbg-recsplit-query:
+	g++ -O3 -std=c++17 fdbg-query.cpp -o fdbg-recsplit-query -l boost_log -l boost_system -l pthread -I ../sux -DNDEBUG

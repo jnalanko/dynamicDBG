@@ -118,7 +118,7 @@ void set_kmer(kmer_t &mer, uint64_t k, uint64_t i, char c)
     mer = mer | val;
 }
 
-kmer_t mer_string_to_binary(string &r, uint64_t &i, uint64_t &K)
+kmer_t mer_string_to_binary(const string &r, const  uint64_t &i, const uint64_t &K)
 {
     kmer_t mer = 0;
 
