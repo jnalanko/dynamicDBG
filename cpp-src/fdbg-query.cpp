@@ -68,6 +68,9 @@ int main(int argc, char* argv[]) {
 
                 bool present = Graph.IsEdgeInGraph_given_KR(nodemer_u, KR_u, nodemer_v, KR_v);
                 hits[i-nodemer_k] = present;
+
+                nodemer_u = nodemer_v;
+                KR_u = KR_v;
             }
             // Write out
             for(long long i = 0; i < (long long)hits.size(); i++)
