@@ -52,16 +52,27 @@ int main(int argc, char* argv[]) {
     Sequence_Reader sr(queryfile, FASTA_MODE);
     while (!sr.done()) {
         string seq = sr.get_next_query_stream().get_all();
-        vector<bool> hits(std::max(0LL, (long long)seq.size() - edgemer_k + 1));
-        for (long long i = 0; i < (long long)seq.size() - edgemer_k + 1; i++) {
-            kmer_t prefix_bin = mer_string_to_binary(seq, 0, nodemer_k);
-            kmer_t suffix_bin = mer_string_to_binary(seq, 1, nodemer_k);
-            bool present = Graph.IsEdgeInGraph(prefix_bin, suffix_bin);
-            hits[i] = present;
+        if(seq.size() >= edgemer_k){
+            vector<bool> hits(std::max(0LL, (long long)seq.size() - edgemer_k + 1));
+            kmer_t nodemer_u = mer_string_to_binary(seq, 0, nodemer_k); // Edgemer prefix
+            kr_hash_t KR_u = Graph.f.generate_KRHash_val_mod(nodemer_u, nodemer_k);
+            
+            for (long long i = nodemer_k; i < (long long)seq.size(); i++) {
+                // Compute edgemer suffix by rolling the prefix forward
+                kmer_t nodemer_v = nodemer_u; 
+                kmer_roll(nodemer_v, nodemer_k, seq[i]);
+
+                // Compute edgemer suffix KR hash by rolling the hash
+                kr_hash_t KR_v = KR_u;
+                Graph.f.update_KRHash_val_OUT_mod(KR_v, access_kmer(nodemer_u,nodemer_k,0), access_kmer(nodemer_v,nodemer_k,nodemer_k-1));
+
+                bool present = Graph.IsEdgeInGraph_given_KR(nodemer_u, KR_u, nodemer_v, KR_v);
+                hits[i] = present;
+            }
+            // Write out
+            for(long long i = 0; i < (long long)hits.size(); i++)
+                ofs << hits[i];
         }
-        // Write out
-        for(long long i = 0; i < (long long)hits.size(); i++)
-            ofs << hits[i];
         ofs << "\n";
     }
     long long elapsed_jarno = cur_time_millis() - query_start_jarno;
