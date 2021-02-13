@@ -366,7 +366,6 @@ public:
         return kr_hash_t(val);
     }
 
-    typedef number<cpp_int_backend<256, 256, unsigned_magnitude, checked, void>> moduloInt;
     kr_hash_t update_KRHash_val_OUT_mod(const kr_hash_t &KR_val, //KR hash of source kmer (mod P)
                                         const unsigned &first,   //character at front of source k-mer
                                         const unsigned &last)
