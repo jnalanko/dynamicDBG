@@ -67,6 +67,14 @@ public:
         of.write((char *)&rinv, sizeof(rinv));
         of.write((char *)&Prime, sizeof(Prime));
 
+        // Write new nodes map
+        int64_t new_n = new_nodes.size();
+        of.write((char *)&new_n, sizeof(new_n));
+        for(const auto& keyval : new_nodes){
+            of.write((char *)&(keyval.first), sizeof(keyval.first));
+            of.write((char *)&(keyval.second), sizeof(keyval.second));
+        }
+
         // Write recsplit
         of << (*recsplit);
     }
@@ -79,7 +87,20 @@ public:
         of.read((char *)&r, sizeof(r));
         of.read((char *)&rinv, sizeof(rinv));
         of.read((char *)&Prime, sizeof(Prime));
-        recsplit = new RecSplit(); // Todo: leaks memory
+
+
+        int64_t new_n;
+        of.read((char *)&new_n, sizeof(new_n));
+        new_nodes.clear();
+        for(int64_t i = 0; i < new_n; i++){
+            kmer_t key; u_int64_t val; 
+            of.read((char *)&key, sizeof(key));
+            of.read((char *)&val, sizeof(val));
+            new_nodes[key] = val;
+        }
+
+
+        recsplit = new RecSplit(); // Todo: leaks a bit of memory
         of >> (*recsplit);
         precomputePowers_mod();
     }

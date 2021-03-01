@@ -477,6 +477,20 @@ public:
             of.write((char *)&label, sizeof(kmer_t));
         }
         bitarray.save(of);
+
+        // Write new nodes
+        int64_t n_new_nodes = new_nodes.size();
+        of.write((char*)&n_new_nodes, sizeof(n_new_nodes));
+        for(int64_t i = 0; i < new_nodes.size(); i++){
+            uint8_t data = (1 << 0) * new_nodes[i][0] + 
+                           (1 << 1) * new_nodes[i][1] +
+                           (1 << 2) * new_nodes[i][2] + 
+                           (1 << 3) * new_nodes[i][3];
+            of.write((char*)&data, sizeof(data));
+            // This takes 8 bits per row. Could be packed to 4 bits per row.
+        }
+
+
     }
 
     // TODO
@@ -495,6 +509,20 @@ public:
             roots[hash] = label;
         }
         bitarray.load(of);
+
+        // Load new nodes
+        int64_t n_new_nodes;
+        of.read((char *)&n_new_nodes, sizeof(n_new_nodes));
+        new_nodes.clear();
+        for(int64_t i = 0; i < n_new_nodes; i++){
+            uint8_t data;
+            of.read((char*)&data, sizeof(data));
+            vector<bool> row = {(bool)((data >> 0) & 1),
+                                (bool)((data >> 1) & 1),
+                                (bool)((data >> 2) & 1),
+                                (bool)((data >> 3) & 1)};
+            new_nodes.push_back(row);
+        }
     }
 };
 
@@ -592,13 +620,38 @@ public:
     {
         of.write((char *)&this->n_orig, sizeof(u_int64_t));
         bitarray.save(of);
+
+        // Write new nodes
+        int64_t n_new_rows = added_rows.size();
+        of.write((char*)&n_new_rows, sizeof(n_new_rows));
+        for(int64_t i = 0; i < added_rows.size(); i++){
+            uint8_t data = (1 << 0) * added_rows[i][0] + 
+                           (1 << 1) * added_rows[i][1] +
+                           (1 << 2) * added_rows[i][2] + 
+                           (1 << 3) * added_rows[i][3];
+            of.write((char*)&data, sizeof(data));
+            // This takes 8 bits per row. Could be packed to 4 bits per row.
+        }
     }
 
     void load(istream &of)
     {
         of.read((char *)&this->n_orig, sizeof(u_int64_t));
-        //    cerr << "INorOUT n:" << n << endl;
         bitarray.load(of);
+
+        // Load new nodes
+        int64_t n_new_nodes;
+        of.read((char *)&n_new_nodes, sizeof(n_new_nodes));
+        added_rows.clear();
+        for(int64_t i = 0; i < n_new_nodes; i++){
+            uint8_t data;
+            of.read((char*)&data, sizeof(data));
+            vector<bool> row = {(bool)((data >> 0) & 1),
+                                (bool)((data >> 1) & 1),
+                                (bool)((data >> 2) & 1),
+                                (bool)((data >> 3) & 1)};
+            added_rows.push_back(row);
+        }
     }
 };
 
@@ -1298,10 +1351,10 @@ public:
         size_t parentTreeSize = getTreeSizeAndMers(parent,
                                                    parentSortedKmers,
                                                    parentSortedKmers_hash);
+
         if (alpha > parentTreeSize)
         {
             //Fix this tree if possible
-
             newRemovalFixTree(parentSortedKmers, parentSortedKmers_hash);
         }
 
@@ -1314,7 +1367,6 @@ public:
         if (alpha > childTreeSize)
         {
             //Fix this tree if possible
-
             newRemovalFixTree(childSortedKmers, childSortedKmers_hash);
         }
     }
@@ -1660,7 +1712,6 @@ public:
    */
     bool dynamicRemoveEdge(const kmer_t &u, const kmer_t &v)
     {
-
         //check if u, v are compatible
         uint64_t ui, vi;
         for (uint64_t i = 0; i < (this->k - 1); ++i)

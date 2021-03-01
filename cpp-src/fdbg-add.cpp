@@ -84,58 +84,57 @@ int main(int argc, char* argv[]) {
     BOOST_LOG_TRIVIAL(info) << "Original Bits per element:"
                             << Graph.bitSize() / static_cast<double>(Graph.n);
 
-    vector<pair<kmer_t, kmer_t>> nodes;
-    set<kmer_t> added_deleted_nodes;
-    set<pair<kmer_t, kmer_t>> added_deleted_edges;
+    vector<pair<kmer_t, kmer_t>> all_edges;
+    set<kmer_t> new_nodes;
+    set<pair<kmer_t, kmer_t>> new_edges;
     for (size_t i = 0; i < kmer_2.size(); i++) {
         string strU = kmer_2[i].substr(0, nodeLength);
         string strV = kmer_2[i].substr(1, nodeLength);
 
         kmer_t u = mer_string_to_binary(strU, num, nodeLength);
         kmer_t v = mer_string_to_binary(strV, num, nodeLength);
-        nodes.push_back(make_pair(u, v));
+        all_edges.push_back(make_pair(u, v));
     }
 
-    // indexing edges
+    // Looking up edges
     clock_t t_start = clock();
-    for (size_t i = 0; i < nodes.size(); i++) {
-        if (!Graph.IsEdgeInGraph(nodes[i].first, nodes[i].second))
-            added_deleted_edges.insert(
-                make_pair(nodes[i].first, nodes[i].second));
+    for (size_t i = 0; i < all_edges.size(); i++) {
+        if (!Graph.IsEdgeInGraph(all_edges[i].first, all_edges[i].second))
+            new_edges.insert(make_pair(all_edges[i].first, all_edges[i].second));
     }
     double t_elapsed = (clock() - t_start) / CLOCKS_PER_SEC;
     BOOST_LOG_TRIVIAL(info)
         << "DONE with indexing all " << kmer_2.size() << " edges";
     BOOST_LOG_TRIVIAL(info)
         << "Time per indexing: " << t_elapsed / kmer_2.size();
-    BOOST_LOG_TRIVIAL(info) << kmer_2.size() - added_deleted_edges.size()
+    BOOST_LOG_TRIVIAL(info) << kmer_2.size() - new_edges.size()
                             << " of the edges were already in the graph";
 
-    for (set<pair<kmer_t, kmer_t>>::iterator it = added_deleted_edges.begin();
-         it != added_deleted_edges.end(); ++it) {
+    for (set<pair<kmer_t, kmer_t>>::iterator it = new_edges.begin();
+         it != new_edges.end(); ++it) {
         if (!Graph.detect_membership(it->first)) {
-            added_deleted_nodes.insert(it->first);
+            new_nodes.insert(it->first);
         }
         if (!Graph.detect_membership(it->second)) {
-            added_deleted_nodes.insert(it->second);
+            new_nodes.insert(it->second);
         }
     }
 
     t_start = clock();
-    for (set<kmer_t>::iterator it = added_deleted_nodes.begin();
-         it != added_deleted_nodes.end(); ++it) {
+    for (set<kmer_t>::iterator it = new_nodes.begin();
+         it != new_nodes.end(); ++it) {
         Graph.addNode(*it);
     }
-    for (set<pair<kmer_t, kmer_t>>::iterator it = added_deleted_edges.begin();
-         it != added_deleted_edges.end(); ++it) {
+    for (set<pair<kmer_t, kmer_t>>::iterator it = new_edges.begin();
+         it != new_edges.end(); ++it) {
         Graph.newDynamicAddEdge(it->first, it->second);
     }
 
     t_elapsed = (clock() - t_start) / CLOCKS_PER_SEC;
     BOOST_LOG_TRIVIAL(info) << "DONE with addition of all "
-                            << added_deleted_edges.size() << " edges";
+                            << new_edges.size() << " edges";
     BOOST_LOG_TRIVIAL(info)
-        << "Time per addition: " << t_elapsed / added_deleted_edges.size();
+        << "Time per addition: " << t_elapsed / new_edges.size();
     BOOST_LOG_TRIVIAL(info)
         << "After addition graph has " << Graph.n << " nodes ";
     BOOST_LOG_TRIVIAL(info) << "Bits per element after addition: "
